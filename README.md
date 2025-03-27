@@ -111,3 +111,5 @@ For questions, suggestions, or contributions, reach out via:
 📧 Email: ldanielfch@gmail.com
 
 🌐 GitHub: [TheRadDani](https://github.com/TheRadDani/)
+
+📚 [View Full API Documentation (HTML)](docs/html/index.html)
