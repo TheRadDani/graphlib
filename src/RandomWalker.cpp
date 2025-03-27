@@ -1,4 +1,4 @@
-#include "RandomWalker.h"
+#include "RandomWalker.hpp"
 #include <chrono>
 #include <algorithm>
 #include <stdexcept>

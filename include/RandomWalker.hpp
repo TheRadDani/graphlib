@@ -21,7 +21,7 @@
  #include <unordered_map>
  #include <string>
  #include <random>
- #include "Graph.h"
+ #include "Graph.hpp"
  
  /**
   * @class RandomWalker
