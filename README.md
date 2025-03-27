@@ -113,3 +113,16 @@ For questions, suggestions, or contributions, reach out via:
 🌐 GitHub: [TheRadDani](https://github.com/TheRadDani/)
 
 📚 [View Full API Documentation (HTML)](https://theraddani.github.io/graphlib/)
+
+## 📖 Citation
+
+If you use GraphLib in academic work, please cite it as:
+
+```bibtex
+@misc{graphlib_2023,
+  author       = {Daniel F. C.}, 
+  title        = {GraphLib: High-Performance C++ Graph Library with Python Bindings},
+  year         = {2025},
+  howpublished = {\url{https://github.com/TheRadDani/graphlib}},
+  note         = {Software library for efficient graph processing}
+}
