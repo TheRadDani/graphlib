@@ -119,7 +119,7 @@ For questions, suggestions, or contributions, reach out via:
 If you use GraphLib in academic work, please cite it as:
 
 ```bibtex
-@misc{graphlib_2023,
+@misc{graphlib_2025,
   author       = {Daniel F. C.}, 
   title        = {GraphLib: High-Performance C++ Graph Library with Python Bindings},
   year         = {2025},
