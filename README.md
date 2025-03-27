@@ -112,4 +112,4 @@ For questions, suggestions, or contributions, reach out via:
 
 🌐 GitHub: [TheRadDani](https://github.com/TheRadDani/)
 
-📚 [View Full API Documentation (HTML)](docs/html/index.html)
+📚 [View Full API Documentation (HTML)](https://theraddani.github.io/graphlib/)
