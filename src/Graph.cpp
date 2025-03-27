@@ -4,28 +4,27 @@
 #include <limits>
 #include <memory>
 #include <cstring>
-#include <immintrin.h>  // For future AVX2 support
+#include <immintrin.h>
 #include <cstdio>
+#include <algorithm>
 
 namespace graph {
 
-// Initialize static empty vector
+// Static empty vector
 const std::vector<int> Graph::empty_vec = {};
 
-// Constructor
+// Constructor & Destructor
 Graph::Graph() noexcept = default;
-
-// Destructor
 Graph::~Graph() noexcept = default;
 
-// Validate that node ID is non-negative and within bounds
+// Input validation
 inline void Graph::validate_node_id(int id) const {
     if (id < 0 || id > std::numeric_limits<int>::max()) {
         throw std::invalid_argument("Invalid node ID: must be non-negative and within integer bounds.");
     }
 }
 
-// Add an undirected edge between two nodes
+// Add edge with bounds-checking
 void Graph::add_edge(int src, int dest) {
     validate_node_id(src);
     validate_node_id(dest);
@@ -43,18 +42,33 @@ void Graph::add_edge(int src, int dest) {
     nodes.insert(dest);
 }
 
-// Check whether a node exists
+// Check node existence
 bool Graph::has_node(int node) const noexcept {
     return nodes.find(node) != nodes.end();
 }
 
-// Return neighbors of a node
+// Get neighbors
 const std::vector<int>& Graph::get_neighbors(int node) const noexcept {
     const auto it = adjacency_list.find(node);
     return (it != adjacency_list.end()) ? it->second : empty_vec;
 }
 
-// Load edges from a file
+// Remove node and all edges pointing to it
+void Graph::remove_node(int node) {
+    if (!has_node(node)) return;
+
+    const auto& neighbors = adjacency_list[node];
+
+    for (int neighbor : neighbors) {
+        auto& vec = adjacency_list[neighbor];
+        vec.erase(std::remove(vec.begin(), vec.end(), node), vec.end());
+    }
+
+    adjacency_list.erase(node);
+    nodes.erase(node);
+}
+
+// Load edge list from file securely
 void Graph::load_edges(const std::string& filename) {
     if (filename.find("..") != std::string::npos || filename.empty()) {
         throw std::invalid_argument("Invalid file path or path traversal detected.");
@@ -89,13 +103,12 @@ void Graph::load_edges(const std::string& filename) {
             }
         }
 
-        // Move to the next line
         while (ptr < end && *ptr != '\n') ++ptr;
         if (*ptr == '\n') ++ptr;
     }
 
     #ifdef __AVX2__
-    // Future SIMD-accelerated parser
+    // TODO: Implement AVX2 vectorized edge parser
     #endif
 }
 
