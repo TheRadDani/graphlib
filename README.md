@@ -1,16 +1,20 @@
-# 🚀 GraphLib: High-Performance C++ Graph Library with Python Bindings
+# 🚀 AegisGraph: High-Performance Graph Library in plain C++ for Python
+
+<p align="center">
+  <img src="images/aegrisgraph_logo.gif" alt="AegrisGraph Logo" style="width: 100%; max-width: 650px;">
+</p>
 
 ## 📚 Introduction
-**GraphLib** is a high-performance graph library written in **C++** with Python bindings. It is designed to provide a fast and efficient alternative to popular graph libraries such as:
+**AegisGraph** is a high-performance graph library written in **C++** with Python bindings. It is designed to provide a fast and efficient alternative to popular graph libraries such as:
 
 - **NetworkX** – Graph analysis library in Python.
 - **PyG (PyTorch Geometric)** – Deep learning framework for graph-based learning.
 
-GraphLib focuses on **hardware efficiency, memory optimization, and security**, offering superior speed and scalability in graph operations.
+AegisGraph focuses on **hardware efficiency, memory optimization, and security**, offering superior speed and scalability in graph operations.
 
 ---
 
-## 🎯 Why Choose GraphLib?
+## 🎯 Why Choose AegisGraph?
 
 ### 🔥 Key Advantages
 - **Adjacency List Representation:**  
@@ -46,8 +50,8 @@ GraphLib focuses on **hardware efficiency, memory optimization, and security**, 
 
 #### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/graphlib.git
-cd graphlib
+git clone https://github.com/your-username/aegisgraph.git
+cd aegisgraph
 mkdir build
 cd build
 cmake ..
@@ -58,10 +62,10 @@ make
 
 🐍 Python Usage
 ```python
-import graphlib
+import aegisgraph
 
 # Create a graph instance
-graph = graphlib.Graph()
+graph = aegisgraph.Graph()
 
 # Add edges
 graph.add_edge(0, 1)
@@ -80,15 +84,15 @@ print(f"Random walk path: {path}")
 
 #### Install with pip
 ```bash
-python3 -m venv .graphlib-env
-source .graphlib-env/bin/activate
+python3 -m venv .aegisgraph-env
+source .aegisgraph-env/bin/activate
 pip install --upgrade pip build
 pip install -e .
 ```
 
 
 🚀 Graph Loading Speed
-GraphLib achieves a 3x speed improvement in loading large-scale graphs compared to NetworkX.
+AegisGraph achieves a 3x speed improvement in loading large-scale graphs compared to NetworkX.
 
 ---
 
@@ -108,7 +112,7 @@ GraphLib achieves a 3x speed improvement in loading large-scale graphs compared 
 ---
 
 🐞 Reporting Issues
-To report a bug or request a feature, please [open an issue](https://github.com/TheRadDani/graphlib/issues)
+To report a bug or request a feature, please [open an issue](https://github.com/TheRadDani/aegisgraph/issues)
 .
 
 ---
@@ -120,17 +124,17 @@ For questions, suggestions, or contributions, reach out via:
 
 🌐 GitHub: [TheRadDani](https://github.com/TheRadDani/)
 
-📚 [View Full API Documentation (HTML)](https://theraddani.github.io/graphlib/)
+📚 [View Full API Documentation (HTML)](https://theraddani.github.io/aegisgraph/)
 
 ## 📖 Citation
 
-If you use GraphLib in academic work, please cite it as:
+If you use AegisGraph in academic work, please cite it as:
 
 ```bibtex
-@misc{graphlib_2025,
+@misc{aegisgraph_2025,
   author       = {Daniel F. C.}, 
-  title        = {GraphLib: High-Performance C++ Graph Library with Python Bindings},
+  title        = {AegisGraph: High-Performance Graph Library in plain C++ for Python},
   year         = {2025},
-  howpublished = {\url{https://github.com/TheRadDani/graphlib}},
+  howpublished = {\url{https://github.com/TheRadDani/aegisgraph}},
   note         = {Software library for efficient graph processing}
 }
