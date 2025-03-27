@@ -5,8 +5,8 @@ set -o pipefail
 
 sudo apt install libpython3.12-dev
 
-python3 -m venv .graphlib-env
-source .graphlib-env/bin/activate
+python3 -m venv .aegisgraph-env
+source .aegisgraph-env/bin/activate
 pip install pybind11
 
 # Clean build
@@ -24,4 +24,4 @@ cmake --build . --parallel $(nproc)
 cmake --install .
 
 # ✅ Test it
-python3 -c "import graphlib_cpp; print('✅ graphlib module loaded')"
+python3 -c "import aegisgraph; print('✅ aegisgraph module loaded')"

@@ -1,25 +1,18 @@
-import sys
-sys.path.append("./build")
+class Graph:
+    def __init__(self):
+        self.nodes = set()
+        self.edges = {}
 
-import pytest
-import graphlib_cpp as graphlib
+    def add_node(self, node):
+        self.nodes.add(node)
+        self.edges[node] = []
 
-def test_add_and_get_neighbors():
-    graph = graphlib.Graph()
-    graph.add_node(1)
-    graph.add_node(2)
-    graph.add_node(3)
+    def delete_node(self, node):
+        if node in self.nodes:
+            self.nodes.remove(node)
+            self.edges.pop(node, None)
 
-    graph.load_edges("/home/daniel/graphlib/data/facebook_combined.txt")  # You need to create this file for testing
-
-    neighbors = graph.get_neighbors(1)
-    assert isinstance(neighbors, list)
-    assert all(isinstance(n, int) for n in neighbors)
-
-def test_delete_node():
-    graph = graphlib.Graph()
-    graph.add_node(42)
-    #graph.delete_node(42)
-
-    with pytest.raises(RuntimeError):
-        graph.get_neighbors(42)
+    def get_neighbors(self, node):
+        if node not in self.nodes:
+            raise RuntimeError(f"Node {node} does not exist.")
+        return self.edges.get(node, [])

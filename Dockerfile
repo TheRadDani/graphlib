@@ -1,27 +1,44 @@
-FROM python:3.12-slim
+FROM python:3.12-slim AS builder
 
-# System dependencies
-RUN apt-get update && apt-get install -y \
+# Install OS-level dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
+    git \
     python3-dev \
-    python3-pip \
-    libpython3.12-dev \
+    libpython3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages
+# Set environment variables
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Copy project files
+WORKDIR /app
+COPY . /app
+
+# Upgrade pip + install build dependencies
 RUN pip install --upgrade pip
-RUN pip install pybind11 pytest
+RUN pip install scikit-build-core pybind11 pytest
 
-# Set workdir and copy everything
-WORKDIR /graphlib
-COPY . .
+# Install AegisGraph in editable mode
+RUN pip install -e .
 
-# Configure, build, and install the library
-RUN mkdir -p build && cd build && \
-    cmake .. -DCMAKE_BUILD_TYPE=Release && \
-    cmake --build . --parallel && \
-    cmake --install .
+# Run tests to ensure installation works
+RUN pytest --maxfail=1 --disable-warnings -q tests/
 
-# Run tests
-CMD ["pytest", "tests"]
+# Final image (optional, minimal)
+FROM python:3.12-slim AS final
+
+# Set virtualenv path
+ENV VIRTUAL_ENV=/opt/venv
+COPY --from=builder $VIRTUAL_ENV $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
+# Copy source code and built library
+WORKDIR /app
+COPY . /app
+
+# Entry point for testing the module
+CMD ["python3", "-c", "import aegisgraph; print('✅ aegisgraph loaded')"]

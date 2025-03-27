@@ -2,11 +2,11 @@ import sys
 sys.path.append("./build")
 
 import pytest
-import graphlib_cpp as graphlib
+import aegisgraph
 
 def test_random_walk():
-    graph = graphlib.Graph()
-    graph.load_edges("/home/daniel/graphlib/data/facebook_combined.txt")  # Create a small graph for testing
+    graph = aegisgraph.Graph()
+    graph.load_edges("/home/daniel/aegisgraph/data/facebook_combined.txt")  # Create a small graph for testing
 
     walks = graph.random_walk(start_node=1, walk_length=5, num_walks=3)
     
