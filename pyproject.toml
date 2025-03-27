@@ -1,0 +1,66 @@
+# ==============================================
+# pyproject.toml for packaging graphlib as a Python module
+# Author: Daniel Ferreto
+# Version: 1.1
+# Date: 2025-03-27
+# Description:
+#     Secure, high-performance C++ graph processing module
+#     exposed to Python using pybind11 and built via scikit-build-core.
+# ==============================================
+
+[build-system]
+requires = [
+  "scikit-build-core[pyproject] >=0.5.0",
+  "pybind11 >=2.10.0",
+  "setuptools",
+  "wheel"
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "graphlib"
+version = "1.1"
+description = "High-performance graph processing and sampling library using C++ and pybind11"
+authors = [
+  { name = "Daniel Ferreto", email = "daniel.ferreto@example.com" }
+]
+license = { text = "MIT" }
+requires-python = ">=3.10"
+readme = "README.md"
+keywords = ["graph", "cpp", "pybind11", "network", "random walk", "high-performance"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Development Status :: 4 - Beta"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yourusername/graphlib"
+"Issues" = "https://github.com/yourusername/graphlib/issues"
+
+[tool.scikit-build]
+build-dir = "build"
+wheel.packages = ["graphlib"]
+cmake.minimum-version = "3.16"
+cmake.verbose = true
+ninja.minimum-version = "1.10"
+install.components = ["graphlib"]
+
+[tool.scikit-build.cmake.define]
+CMAKE_BUILD_TYPE = "Release"
+PYTHON_EXECUTABLE = "${{ sys.executable }}"
+ENABLE_ASAN = "OFF"
+ENABLE_UBSAN = "OFF"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests"
+]
