@@ -3,7 +3,7 @@
  * @brief Implementation of the Graph class with secure and hardware-aware edge list parsing.
  */
 
- #include "Graph.h"
+ #include "Graph.hpp"
  #include <fstream>
  #include <iostream>
  #include <sstream>
