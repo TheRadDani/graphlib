@@ -78,6 +78,14 @@ print(f"Random walk path: {path}")
 
 ---
 
+#### Install with pip
+```bash
+python3 -m venv .graphlib-env
+source .graphlib-env/bin/activate
+pip install --upgrade pip build
+pip install -e .
+```
+
 
 🚀 Graph Loading Speed
 GraphLib achieves a 3x speed improvement in loading large-scale graphs compared to NetworkX.

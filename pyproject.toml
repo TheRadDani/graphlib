@@ -1,5 +1,5 @@
 # ==============================================
-# pyproject.toml for packaging graphlib as a Python module
+# pyproject.toml for packaging aegisgraph as a Python module
 # Author: Daniel Ferreto
 # Version: 1.1
 # Date: 2025-03-27
@@ -10,19 +10,17 @@
 
 [build-system]
 requires = [
-  "scikit-build-core[pyproject] >=0.5.0",
-  "pybind11 >=2.10.0",
-  "setuptools",
-  "wheel"
+  "scikit-build-core[pyproject]", 
+  "pybind11"
 ]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "graphlib"
+name = "aegisgraph"
 version = "1.1"
-description = "High-performance graph processing and sampling library using C++ and pybind11"
+description = "High-performance graph processing and random walk library in C++ with Python bindings"
 authors = [
-  { name = "Daniel Ferreto", email = "daniel.ferreto@example.com" }
+  { name = "Daniel Ferreto", email = "ldanielfch@gmail.com" }
 ]
 license = { text = "MIT" }
 requires-python = ">=3.10"
@@ -37,30 +35,22 @@ classifiers = [
   "Development Status :: 4 - Beta"
 ]
 
-[project.urls]
-"Homepage" = "https://github.com/yourusername/graphlib"
-"Issues" = "https://github.com/yourusername/graphlib/issues"
+[project.optional-dependencies]
+dev = ["pytest"]
 
 [tool.scikit-build]
+minimum-version = "0.7"
 build-dir = "build"
-wheel.packages = ["graphlib"]
-cmake.minimum-version = "3.16"
-cmake.verbose = true
-ninja.minimum-version = "1.10"
-install.components = ["graphlib"]
+wheel.expand-macos-universal-tags = true
 
-[tool.scikit-build.cmake.define]
-CMAKE_BUILD_TYPE = "Release"
-PYTHON_EXECUTABLE = "${{ sys.executable }}"
-ENABLE_ASAN = "OFF"
-ENABLE_UBSAN = "OFF"
+[project.urls]
+"Homepage" = "https://github.com/TheRadDani/aegisgraph"
+"Issues" = "https://github.com/TheRadDani/aegisgraph/issues"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.scikit-build.cmake]
+minimum-version = "3.16"
+build-type = "Release"
+args = ["-DPYBIND11_FINDPYTHON=ON"]
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -q"
-testpaths = [
-    "tests"
-]
+[tool.scikit-build.sdist]
+include = ["bindings/*", "src/*", "include/*", "CMakeLists.txt"]
