@@ -1,6 +1,6 @@
 /**
- * @file graphlib.cpp
- * @brief Pybind11 bindings for graphlib C++ library (Graph and RandomWalker).
+ * @file aegisgraph.cpp
+ * @brief Pybind11 bindings for aegisgraph C++ library (Graph and RandomWalker).
  *
  * @author Daniel Ferreto
  * @version 1.1
@@ -13,8 +13,8 @@
 
  #include <pybind11/pybind11.h>
  #include <pybind11/stl.h>
- #include "../src/Graph.h"
- #include "../src/RandomWalker.h"
+ #include "Graph.hpp"
+ #include "RandomWalker.hpp"
  
  // Compiler optimization hints
  #if defined(__GNUC__) || defined(__clang__)
@@ -24,8 +24,8 @@
  
  namespace py = pybind11;
  
- PYBIND11_MODULE(graphlib, m) {
-     m.doc() = "graphlib: High-performance graph processing library in C++ (secure, hardware-aware)";
+ PYBIND11_MODULE(aegisgraph, m) {
+     m.doc() = "aegisgraph: High-performance graph processing library in C++ (secure, hardware-aware)";
  
      py::class_<Graph>(m, "Graph")
          .def(py::init<>(), "Create an empty graph instance.")
