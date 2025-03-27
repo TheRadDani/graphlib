@@ -1,11 +1,8 @@
-# CMakeLists.txt for the graphlib project
-# High-performance graph processing and secure random walks for Python
-# Author: Daniel Ferreto
-# Version: 1.1
-# Date: 2025-03-27
-
+# CMakeLists.txt for the aegisgraph project
 cmake_minimum_required(VERSION 3.16)
-project(graphlib LANGUAGES CXX)
+cmake_policy(SET CMP0148 NEW)  # Suppress CMP0148 warning
+
+project(aegisgraph LANGUAGES CXX)
 
 # === Project Configuration ===
 set(CMAKE_CXX_STANDARD 17)
@@ -34,48 +31,53 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
     add_compile_options(-march=armv8-a)
 endif()
 
-# === Pybind11 Dynamic Detection ===
-execute_process(
-    COMMAND ${Python3_EXECUTABLE} -m pybind11 --cmakedir
-    OUTPUT_VARIABLE PYBIND11_CMAKE_DIR
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-list(APPEND CMAKE_PREFIX_PATH "${PYBIND11_CMAKE_DIR}")
+# === Pybind11 and Python 3.12 Setup ===
+set(PYBIND11_FINDPYTHON ON)
+
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 find_package(pybind11 REQUIRED CONFIG)
+
+message(STATUS "Python include dir: ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python library    : ${Python3_LIBRARIES}")
+message(STATUS "Python executable : ${Python3_EXECUTABLE}")
 
 # === Source Files ===
 set(SOURCE_FILES
     src/Graph.cpp
     src/RandomWalker.cpp
-    bindings/graphlib.cpp
+    bindings/aegisgraph.cpp
 )
 
 # === Target Declaration ===
-pybind11_add_module(graphlib ${SOURCE_FILES})
+pybind11_add_module(aegisgraph ${SOURCE_FILES})
+
+# === Include and Link Python Explicitly ===
+target_include_directories(aegisgraph PRIVATE ${Python3_INCLUDE_DIRS})
+target_link_libraries(aegisgraph PRIVATE ${Python3_LIBRARIES})
 
 # === Secure Linking ===
-target_link_options(graphlib PRIVATE "LINKER:--no-undefined" "LINKER:--as-needed")
+target_link_options(aegisgraph PRIVATE "LINKER:--no-undefined" "LINKER:--as-needed")
 
 # === Include Directories ===
-target_include_directories(graphlib
+target_include_directories(aegisgraph
     PRIVATE
+        ${CMAKE_SOURCE_DIR}/include
         ${CMAKE_SOURCE_DIR}/src
         ${CMAKE_SOURCE_DIR}/bindings
 )
 
-# === Installation Rules ===
-install(TARGETS graphlib
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/python3.10/site-packages)
-
-# === Postbuild Security Checks ===
-add_custom_command(TARGET graphlib POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E echo "\n[INFO] Running post-build security audit..."
-    COMMAND ${CMAKE_COMMAND} -E echo "Check with: readelf -Wl $<TARGET_FILE:graphlib>"
+# === Installation Rules (detect Python path) ===
+execute_process(
+    COMMAND ${Python3_EXECUTABLE} -c "import sysconfig; print(sysconfig.get_paths()[\"purelib\"])"
+    OUTPUT_VARIABLE PYTHON_SITE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-# === Usage Notes ===
-message(STATUS "\nTo use graphlib in Python:")
-message(STATUS "  1. Build with: cmake -B build -DCMAKE_BUILD_TYPE=Release")
-message(STATUS "  2. Compile: cmake --build build")
-message(STATUS "  3. Install: sudo cmake --install build")
-message(STATUS "  4. Use in Python >= 3.10: import graphlib")
+install(TARGETS aegisgraph
+        LIBRARY DESTINATION ${PYTHON_SITE_DIR})
+
+# === Postbuild Security Checks ===
+add_custom_command(TARGET aegisgraph POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "[INFO] Post-build audit complete."
+    COMMENT "Running post-build audit"
+)
