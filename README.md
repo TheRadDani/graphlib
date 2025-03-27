@@ -1,7 +1,7 @@
 # 🚀 AegisGraph: High-Performance Graph Library in plain C++ for Python
 
 <p align="center">
-  <img src="images/aegrisgraph_logo.gif" alt="AegrisGraph Logo" style="width: 100%; max-width: 650px;">
+  <img src="images/aegrisgraph_logo.gif" alt="AegrisGraph Logo" style="width: 100%; max-width: 850px;">
 </p>
 
 ## 📚 Introduction
