@@ -1,22 +1,27 @@
-sudo apt install build-essential clang cmake pybind11-dev -y
+#!/bin/bash
 
-python3 -m ensurepip --upgrade
+set -e  # Exit on error
+set -o pipefail
 
-pip install --upgrade pip
+sudo apt install libpython3.12-dev
+
+python3 -m venv .graphlib-env
+source .graphlib-env/bin/activate
 pip install pybind11
 
-mkdir -p build && cd build
+# Clean build
+rm -rf build
+mkdir build && cd build
 
-# Basic secure build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+# Configure
+cmake .. -DCMAKE_BUILD_TYPE=Release \
+         -DPython3_EXECUTABLE=$(which python3)
 
-# Enable sanitizers (recommended for dev testing)
-cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-         -DENABLE_ASAN=ON \
-         -DENABLE_UBSAN=ON
+# Build
+cmake --build . --parallel $(nproc)
 
-cmake --build . --config Release
-
+# Install to your site-packages
 cmake --install .
 
-export PYTHONPATH=$PWD:$PYTHONPATH
+# ✅ Test it
+python3 -c "import graphlib_cpp; print('✅ graphlib module loaded')"
