@@ -90,12 +90,17 @@
  }
  
  void Graph::delete_node(int node) {
-     auto it = adj_list.find(node);
-     if (it != adj_list.end()) {
-         for (int neighbor : it->second) {
-             auto& vec = adj_list[neighbor];
-             vec.erase(std::remove(vec.begin(), vec.end(), node), vec.end());
-         }
-         adj_list.erase(it);
-     }
- }
+    auto it = adj_list.find(node);
+    if (it != adj_list.end()) {
+        // First, remove 'node' from all neighbor lists
+        for (const auto& neighbor : it->second) {
+            auto neighbor_it = adj_list.find(neighbor);
+            if (neighbor_it != adj_list.end()) {
+                auto& neighbors = neighbor_it->second;
+                neighbors.erase(std::remove(neighbors.begin(), neighbors.end(), node), neighbors.end());
+            }
+        }
+        // Then, remove the node from the adjacency list
+        adj_list.erase(it);
+    }
+}
