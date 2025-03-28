@@ -29,7 +29,7 @@ PYBIND11_MODULE(aegisgraph, m) {
 
     py::class_<Graph>(m, "Graph")
         .def(py::init<>(), "Create an empty graph instance.")
-        .def("loadGraph", &Graph::load_graph, py::arg("filepath"),
+        .def("load_graph", &Graph::load_graph, py::arg("filepath"),
             R"pbdoc(
                 Load an edge list from a file.
 
@@ -50,13 +50,13 @@ PYBIND11_MODULE(aegisgraph, m) {
             R"pbdoc(Add a node to the graph.)pbdoc")
         .def("delete_node", &Graph::delete_node, py::arg("node"),
             R"pbdoc(Delete a node and its edges from the graph.)pbdoc")
-            .def("saveGraph", &Graph::save_graph, py::arg("filename"),
-            R"pbdoc(
-                Save the graph to a file in edge list format.
-   
-                Args:
-                    filename (str): Path where the graph will be saved.
-            )pbdoc")
+        .def("save_graph", &Graph::save_graph, py::arg("filename"),
+        R"pbdoc(
+            Save the graph to a file in edge list format.
+
+            Args:
+                filename (str): Path where the graph will be saved.
+        )pbdoc")
         .def("random_walk", [](Graph& self, int start_node, int walk_length, int num_walks) {
             // Stack-allocated, short-lived walker
             RandomWalker walker;

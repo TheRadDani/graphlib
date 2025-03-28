@@ -1,5 +1,5 @@
 import sys
-sys.path.append("./build")
+sys.path.append("/home/daniel/aegisgraph/build")
 
 import timeit
 import networkx as nx
@@ -10,16 +10,16 @@ import random
 setup_aegisgraph = '''
 import aegisgraph
 graph = aegisgraph.Graph()
-graph.load_edges("./data/facebook_combined.txt")
+graph.load_graph("./data/facebook_combined.txt")
 '''
-time_aegisgraph = timeit.timeit("graph.get_neighbors(42)", setup=setup_aegisgraph, number=100000)
+time_aegisgraph = timeit.timeit("graph.get_neighbors(42)", setup=setup_aegisgraph, number=10000000)
 
 # NetworkX
 setup_networkx = '''
 import networkx as nx
 G = nx.read_edgelist("./data/facebook_combined.txt")
 '''
-time_nx = timeit.timeit('list(G.neighbors("42"))', setup=setup_networkx, number=100000)
+time_nx = timeit.timeit('list(G.neighbors("42"))', setup=setup_networkx, number=10000000)
 
 print(f"aegisgraph: {time_aegisgraph:.4f}s | NetworkX: {time_nx:.4f}s")
 
@@ -99,7 +99,7 @@ for _ in range(num_walks):
 '''
 
 # Time the function execution
-time_nx = timeit.timeit(stmt, setup=setup_networkx, number=100000)
+time_nx = timeit.timeit(stmt, setup=setup_networkx, number=10000000)
 
 
 setup_aegisgraph ="""
@@ -107,10 +107,10 @@ import sys
 sys.path.append("./build")
 import aegisgraph
 graph = aegisgraph.Graph()
-graph.load_edges("/home/daniel/aegisgraph/data/facebook_combined.txt")  # You need to create this file for testing
+graph.load_graph("/home/daniel/aegisgraph/data/facebook_combined.txt")  # You need to create this file for testing
 """
 
-time_aegisgraph = timeit.timeit("graph.random_walk(start_node=10, walk_length=5, num_walks=3)", setup=setup_aegisgraph, number=100000)
+time_aegisgraph = timeit.timeit("graph.random_walk(start_node=10, walk_length=5, num_walks=3)", setup=setup_aegisgraph, number=10000000)
 
 
 print(f"aegisgraph: {time_aegisgraph:.4f}s | NetworkX: {time_nx:.4f}s")

@@ -14,15 +14,27 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <cstring>
+#include <omp.h>
+#include <limits>
 
-Graph::Graph() {
-    static_empty_vector = std::vector<int>();
+using namespace absl;  // For flat_hash_map
+
+Graph::Graph() {}
+
+const absl::InlinedVector<int, 4>& Graph::empty_vector() {
+    static const absl::InlinedVector<int, 4> empty;
+    return empty;
 }
 
 bool Graph::validate_filepath(const std::string& path) const {
-    // Avoid directory traversal: only allow alphanumeric filenames with underscores
-    std::regex safe_path("^[a-zA-Z0-9_\\-./]+$");
-    return std::regex_match(path, safe_path);
+    // Resolve absolute path and check against safe directory
+    char* resolved = realpath(path.c_str(), nullptr);
+    if (!resolved) return false;
+    
+    const std::string safe_dir = "/safe/data/directory/";
+    bool valid = (strncmp(resolved, safe_dir.c_str(), safe_dir.size()) == 0);
+    free(resolved);
+    return valid;
 }
 
 void Graph::load_graph(const std::string& filepath) {
@@ -73,14 +85,12 @@ void Graph::load_graph(const std::string& filepath) {
 
     munmap(data, length);
     close(fd);
+    return;
 }
 
 const std::vector<int>& Graph::get_neighbors(int node) const {
     auto it = adj_list.find(node);
-    if (it != adj_list.end()) {
-        return it->second;
-    }
-    return static_empty_vector;
+    return it != adj_list.end() ? it->second : static_empty_vector;
 }
 
 void Graph::add_node(int node) {
@@ -90,19 +100,26 @@ void Graph::add_node(int node) {
 }
 
 void Graph::delete_node(int node) {
-auto it = adj_list.find(node);
-if (it != adj_list.end()) {
-    // First, remove 'node' from all neighbor lists
-    for (const auto& neighbor : it->second) {
-        auto neighbor_it = adj_list.find(neighbor);
-        if (neighbor_it != adj_list.end()) {
-            auto& neighbors = neighbor_it->second;
-            neighbors.erase(std::remove(neighbors.begin(), neighbors.end(), node), neighbors.end());
+    auto it = adj_list.find(node);
+    if (it == adj_list.end()) return;
+
+    const auto& neighbors = it->second;
+
+    #pragma omp parallel for schedule(dynamic)
+    for (size_t i = 0; i < neighbors.size(); ++i) {
+        int neighbor = neighbors[i];
+        auto n_it = adj_list.find(neighbor);
+        if (n_it != adj_list.end()) {
+            auto& list = n_it->second;
+            auto pos = std::find(list.begin(), list.end(), node);
+            if (pos != list.end()) {
+                if (pos != list.end() - 1) *pos = list.back();
+                list.pop_back();
+            }
         }
     }
-    // Then, remove the node from the adjacency list
-    adj_list.erase(it);
-}
+
+    adj_list.erase(node);
 }
 
 void Graph::save_graph(const std::string& filename) const {
@@ -118,11 +135,10 @@ void Graph::save_graph(const std::string& filename) const {
     }
 
     std::unordered_set<std::pair<int, int>, PairHash> written_edges;
-
     for (const auto& [src, neighbors] : adj_list) {
         for (int dst : neighbors) {
             auto edge = std::minmax(src, dst);
-            if (written_edges.insert(edge).second) {  // Insert returns true if new
+            if (written_edges.insert(edge).second) {
                 outfile << edge.first << " " << edge.second << "\n";
             }
         }

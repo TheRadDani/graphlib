@@ -1,17 +1,18 @@
 /**
  * @file Graph.hpp
- * @brief High-performance, secure graph library using adjacency lists.
+ * @brief High-performance, secure graph library using parallel adjacency lists.
  * 
- * @author
- * Daniel Ferreto
- * 
- * @version 1.1
- * @date 2025-03-27
+ * @author Daniel Ferreto
+ * @version 1.0
+ * @date 2025-03-28
  * 
  * @details
- * This header defines a memory-efficient, hardware-aware undirected graph structure,
- * designed to scale to large real-world datasets such as those from Stanford SNAP (e.g., Facebook Graph).
- * It supports safe edge insertion, neighbor queries, file loading, and node removal.
+ * Hardware-optimized graph structure using Abseil's flat_hash_map for O(1) average complexity,
+ * SIMD-accelerated parsing, and OpenMP-based parallelism. Features secure memory handling,
+ * integer overflow protection, and cache-aware algorithms. Designed for large-scale social
+ * network graphs (e.g., Stanford SNAP datasets) with efficient node deletion and batch processing.
+ * 
+ * @note Compile with -mavx2 -fopenmp -O3 for optimal performance
  */
 
 #ifndef GRAPH_H
@@ -22,6 +23,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <mutex>
+#include <shared_mutex>
+#include <utility>
+#include <absl/container/flat_hash_map.h>
+#include <absl/container/inlined_vector.h>
 
 struct PairHash {
     template <class T1, class T2>
@@ -74,6 +79,19 @@ void save_graph(const std::string& filename) const;
 private:
     std::unordered_map<int, std::vector<int>> adj_list;  ///< Adjacency list representation
     std::vector<int> static_empty_vector; ///< Static empty vector for non-existent nodes
+    /**
+     * @brief Provides a static reference to an empty inlined vector.
+     *
+     * This utility method returns a reference to a shared, immutable empty 
+     * `absl::InlinedVector<int, 4>`, which is used internally to avoid dynamic 
+     * allocation when a node has no neighbors or does not exist in the graph.
+     * 
+     * It ensures that calls to `get_neighbors()` always return a valid reference,
+     * even for missing nodes, without allocating a new empty vector each time.
+     *
+     * @return A const reference to a static empty `absl::InlinedVector<int, 4>`.
+     */
+    static const absl::InlinedVector<int, 4>& empty_vector();
 
     /**
      * @brief Validates the input file path to avoid directory traversal attacks.

@@ -3,7 +3,12 @@
 set -e  # Exit on error
 set -o pipefail
 
-sudo apt install libpython3.12-dev
+sudo apt install \
+    libpython3.12-dev \
+    libabsl-dev \
+    libomp-dev \
+    binutils-gold \
+    gcc-multilib -y
 
 python3 -m venv .aegisgraph-env
 source .aegisgraph-env/bin/activate
@@ -15,7 +20,9 @@ mkdir build && cd build
 
 # Configure
 cmake .. -DCMAKE_BUILD_TYPE=Release \
-         -DPython3_EXECUTABLE=$(which python3)
+        -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=gold" \
+        -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=gold" \
+        -DPython3_EXECUTABLE=$(which python3)
 
 # Build
 cmake --build . --parallel $(nproc)
