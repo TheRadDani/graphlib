@@ -43,7 +43,7 @@ AegisGraph focuses on **hardware efficiency, memory optimization, and security**
 
 ### 📦 Prerequisites
 - **C++ Compiler:** GCC, Clang, or MSVC supporting C++17 or later.
-- **Python (Optional for Bindings):** Version 3.7 or higher.
+- **Python (Optional for Bindings):** Version 3.10 or higher.
 - **CMake:** For building the library.
 
 ### ⚙️ Building from Source
