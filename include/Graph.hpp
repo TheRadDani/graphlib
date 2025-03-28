@@ -25,8 +25,6 @@
 #include <mutex>
 #include <shared_mutex>
 #include <utility>
-#include <absl/container/flat_hash_map.h>
-#include <absl/container/inlined_vector.h>
 
 struct PairHash {
     template <class T1, class T2>
@@ -79,19 +77,7 @@ void save_graph(const std::string& filename) const;
 private:
     std::unordered_map<int, std::vector<int>> adj_list;  ///< Adjacency list representation
     std::vector<int> static_empty_vector; ///< Static empty vector for non-existent nodes
-    /**
-     * @brief Provides a static reference to an empty inlined vector.
-     *
-     * This utility method returns a reference to a shared, immutable empty 
-     * `absl::InlinedVector<int, 4>`, which is used internally to avoid dynamic 
-     * allocation when a node has no neighbors or does not exist in the graph.
-     * 
-     * It ensures that calls to `get_neighbors()` always return a valid reference,
-     * even for missing nodes, without allocating a new empty vector each time.
-     *
-     * @return A const reference to a static empty `absl::InlinedVector<int, 4>`.
-     */
-    static const absl::InlinedVector<int, 4>& empty_vector();
+
 
     /**
      * @brief Validates the input file path to avoid directory traversal attacks.

@@ -17,13 +17,8 @@
 #include <omp.h>
 #include <limits>
 
-using namespace absl;  // For flat_hash_map
-
-Graph::Graph() {}
-
-const absl::InlinedVector<int, 4>& Graph::empty_vector() {
-    static const absl::InlinedVector<int, 4> empty;
-    return empty;
+Graph::Graph() {
+    static_empty_vector = std::vector<int>();
 }
 
 bool Graph::validate_filepath(const std::string& path) const {
