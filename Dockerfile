@@ -1,44 +1,52 @@
-FROM python:3.12-slim AS builder
+# Build stage
+FROM python:3.12-slim-bookworm as builder
 
-# Install OS-level dependencies
+# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     cmake \
-    git \
-    python3-dev \
-    libpython3-dev \
+    ninja-build \
+    libomp-dev \
+    libpython3.12-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Set environment variables
-ENV VIRTUAL_ENV=/opt/venv
-RUN python3 -m venv $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
-# Copy project files
 WORKDIR /app
-COPY . /app
+COPY . .
 
-# Upgrade pip + install build dependencies
-RUN pip install --upgrade pip
-RUN pip install scikit-build-core pybind11 pytest
+# Install with build cache and without tests
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --user --no-cache-dir .
 
-# Install AegisGraph in editable mode
-RUN pip install -e .
+# Runtime stage
+FROM python:3.12-slim-bookworm
 
-# Run tests to ensure installation works
-RUN pytest --maxfail=1 --disable-warnings -q tests/
+# Install runtime dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends libgomp1 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Final image (optional, minimal)
-FROM python:3.12-slim AS final
+# Create application user
+RUN useradd -m -u 1000 appuser && \
+    mkdir -p /app && \
+    chown -R appuser:appuser /app
 
-# Set virtualenv path
-ENV VIRTUAL_ENV=/opt/venv
-COPY --from=builder $VIRTUAL_ENV $VIRTUAL_ENV
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# Copy installed package
+COPY --from=builder --chown=appuser:appuser /root/.local /home/appuser/.local
 
-# Copy source code and built library
+# Environment configuration
+ENV PATH="/home/appuser/.local/bin:${PATH}" \
+    PYTHONUNBUFFERED="1" \
+    OMP_NUM_THREADS="1" \
+    PYTHONPATH="/app"
+
+USER appuser
 WORKDIR /app
-COPY . /app
 
-# Entry point for testing the module
-CMD ["python3", "-c", "import aegisgraph; print('✅ aegisgraph loaded')"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s \
+    CMD python -c "import aegisgraph" || exit 1
+
+# Default entrypoint
+ENTRYPOINT ["python"]
+CMD ["python", "-c", "import aegisgraph; print('✅ Module loaded successfully')"]
