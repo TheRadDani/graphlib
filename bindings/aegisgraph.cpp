@@ -27,6 +27,16 @@ namespace py = pybind11;
 PYBIND11_MODULE(aegisgraph, m) {
     m.doc() = "aegisgraph: High-performance graph processing library in C++ (secure, hardware-aware)";
 
+    // Define module attributes
+    m.attr("__version__") = "1.0";
+    m.attr("__author__") = "Daniel Ferreto <ldanielfch@gmail.com>";
+    m.attr("__email__") = "ldanielfch@gmail.com";
+    m.attr("__copyright__") = "Copyright (c) 2025 Daniel Ferreto";
+    m.attr("__license__") = "MIT";
+    m.attr("__description__") = "High-performance graph processing and random walk library in C++ with Python bindings";
+    m.attr("__homepage__") = "https://github.com/TheRadDani/aegisgraph";
+    m.attr("__url__") = "https://theraddani.github.io/aegisgraph/";
+
     py::class_<Graph>(m, "Graph")
         .def(py::init<>(), "Create an empty graph instance.")
         .def("load_graph", &Graph::load_graph, py::arg("filepath"),
