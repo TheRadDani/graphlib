@@ -1,6 +1,8 @@
 # CMakeLists.txt for the aegisgraph project
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.28...3.28)
 cmake_policy(SET CMP0148 NEW)  # Suppress CMP0148 warning
+cmake_policy(SET CMP0116 NEW)  # Handle file-based package requirements
+cmake_policy(SET CMP0144 NEW)  # Honor CMAKE_FIND_PACKAGE_REDIRECTS_DIR
 
 project(aegisgraph LANGUAGES CXX)
 
@@ -127,7 +129,10 @@ target_link_options(aegisgraph PRIVATE
 )
 
 if(CMAKE_LINKER MATCHES "gold")
-    target_link_options(aegisgraph PRIVATE "LINKER:--threads")
+    target_link_options(aegisgraph PRIVATE 
+        "LINKER:--threads"
+        "LINKER:--fatal-warnings"
+    )
 endif()
 
 # === RPATH Handling ===
