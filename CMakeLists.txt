@@ -4,6 +4,11 @@ cmake_policy(SET CMP0148 NEW)  # Suppress CMP0148 warning
 
 project(aegisgraph LANGUAGES CXX)
 
+# === Project Configuration ===
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # === Enable OpenMP ===
 find_package(OpenMP REQUIRED)
 if(OpenMP_CXX_FOUND)
@@ -25,11 +30,6 @@ FetchContent_Declare(
     GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(abseil-cpp)
-
-# === Project Configuration ===
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # === Optimization Flags ===
 set(COMMON_FLAGS "-Wall -Wextra -Wpedantic -fstack-protector-strong -D_FORTIFY_SOURCE=2")
@@ -86,7 +86,9 @@ configure_file(${CMAKE_SOURCE_DIR}/asan_options.cfg ${CMAKE_BINARY_DIR}/asan_opt
 pybind11_add_module(aegisgraph ${SOURCE_FILES})
 
 # === Include and Link Python Explicitly ===
-target_include_directories(aegisgraph PRIVATE ${Python3_INCLUDE_DIRS})
+target_include_directories(aegisgraph PRIVATE 
+    ${Python3_INCLUDE_DIRS}
+)
 target_link_libraries(aegisgraph PRIVATE ${Python3_LIBRARIES})
 
 # === Security Hardening ===
@@ -111,6 +113,7 @@ target_include_directories(aegisgraph PRIVATE
 
 # === Link Dependencies ===
 target_link_libraries(aegisgraph PRIVATE
+    absl::flat_hash_map
     ${LINK_LIBS}
     stdc++fs
     pthread
