@@ -10,14 +10,14 @@
 
 [build-system]
 requires = [
-  "scikit-build-core[pyproject]", 
-  "pybind11"
+  "scikit-build-core>=0.8.0",
+  "pybind11",
 ]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "aegisgraph"
-version = "1.1"
+version = "1.0"
 description = "High-performance graph processing and random walk library in C++ with Python bindings"
 authors = [
   { name = "Daniel Ferreto", email = "ldanielfch@gmail.com" }
@@ -36,7 +36,11 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",  
+    "coverage>=7.0"
+]
 
 [tool.scikit-build]
 minimum-version = "0.7"
@@ -45,12 +49,35 @@ wheel.expand-macos-universal-tags = true
 
 [project.urls]
 "Homepage" = "https://github.com/TheRadDani/aegisgraph"
+Documentation = "https://github.com/TheRadDani/aegisgraph/wiki"
 "Issues" = "https://github.com/TheRadDani/aegisgraph/issues"
+Changelog = "https://github.com/TheRadDani/aegisgraph/releases"
 
 [tool.scikit-build.cmake]
-minimum-version = "3.16"
+minimum-version = "3.24"
 build-type = "Release"
-args = ["-DPYBIND11_FINDPYTHON=ON"]
+args = [
+  "--fresh",  # Forces new configuration, ignores cache
+  "-DPYBIND11_FINDPYTHON=ON",
+  "-G", "Ninja",  # Force Ninja generator
+  "-GNinja",
+  "--no-warn-unused-cli"
+]
+define = { ABSEIL_BUILD_TESTING = false, ABSL_PROPAGATE_CXX_STD = true }
 
 [tool.scikit-build.sdist]
-include = ["bindings/*", "src/*", "include/*", "CMakeLists.txt"]
+include = [
+    "src/*",
+    "include/*",
+    "bindings/*",
+    "CMakeLists.txt",
+    "asan_options.cfg",
+    "pyproject.toml",
+    "README.md"
+]
+
+# pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+#addopts = "--verbose --cov=aegisgraph --cov-report=term-missing"
+python_files = "test_*.py"
