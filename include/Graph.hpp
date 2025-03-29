@@ -23,21 +23,23 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <mutex>
+#include <memory>
 #include <shared_mutex>
 #include <utility>
+#include "absl/container/flat_hash_map.h"
+
+#include <utility> // For std::pair
 
 struct PairHash {
     template <class T1, class T2>
-    std::size_t operator()(const std::pair<T1, T2>& p) const {
-        auto h1 = std::hash<T1>{}(p.first);
-        auto h2 = std::hash<T2>{}(p.second);
-        return h1 ^ (h2 << 1); // Simple XOR hash
+    size_t operator()(const std::pair<T1, T2>& p) const noexcept {
+        return absl::HashOf(p.first, p.second);
     }
 };
 
 class Graph {
 public:
-    Graph();
+    Graph() = default;
 
     /**
      * @brief Loads an edge list from a file into an adjacency list.
@@ -75,8 +77,9 @@ public:
 void save_graph(const std::string& filename) const;
 
 private:
-    std::unordered_map<int, std::vector<int>> adj_list;  ///< Adjacency list representation
-    std::vector<int> static_empty_vector; ///< Static empty vector for non-existent nodes
+    absl::flat_hash_map<int, std::shared_ptr<const std::vector<int>>> adj_list;  ///< Adjacency list representation
+    static const std::vector<int> static_empty_vector; // Single shared instance
+    mutable std::shared_mutex adj_list_mutex; // Thread-safe access control
 
 
     /**

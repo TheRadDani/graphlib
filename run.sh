@@ -8,8 +8,10 @@ sudo apt install \
     libabsl-dev \
     libomp-dev \
     binutils-gold \
+    ninja-build \
     gcc-multilib -y
 
+python -m pip install --upgrade pip
 python3 -m venv .aegisgraph-env
 source .aegisgraph-env/bin/activate
 pip install pybind11

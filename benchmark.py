@@ -1,6 +1,3 @@
-import sys
-sys.path.append("/home/daniel/aegisgraph/build")
-
 import timeit
 import networkx as nx
 import aegisgraph
@@ -12,16 +9,28 @@ import aegisgraph
 graph = aegisgraph.Graph()
 graph.load_graph("./data/facebook_combined.txt")
 '''
-time_aegisgraph = timeit.timeit("graph.get_neighbors(42)", setup=setup_aegisgraph, number=10000000)
+time_aegisgraph = timeit.timeit("graph.get_neighbors(42)", setup=setup_aegisgraph, number=1000000)
 
 # NetworkX
 setup_networkx = '''
 import networkx as nx
 G = nx.read_edgelist("./data/facebook_combined.txt")
 '''
-time_nx = timeit.timeit('list(G.neighbors("42"))', setup=setup_networkx, number=10000000)
+time_nx = timeit.timeit('G.neighbors("42")', setup=setup_networkx, number=1000000)
 
 print(f"aegisgraph: {time_aegisgraph:.4f}s | NetworkX: {time_nx:.4f}s")
+
+
+import aegisgraph
+graph = aegisgraph.Graph()
+graph.load_graph("./data/facebook_combined.txt")
+neighbor = graph.get_neighbors(42)
+print("Neighbors of node 42 with aegisgraph:", neighbor)
+
+import networkx as nx
+G = nx.read_edgelist("./data/facebook_combined.txt")
+neighbors = list(G.neighbors("42"))
+print("Neighbors of node 42 with nx:", neighbors)
 
 
 import networkx as nx
@@ -99,7 +108,7 @@ for _ in range(num_walks):
 '''
 
 # Time the function execution
-time_nx = timeit.timeit(stmt, setup=setup_networkx, number=10000000)
+time_nx = timeit.timeit(stmt, setup=setup_networkx, number=1000000)
 
 
 setup_aegisgraph ="""
@@ -110,7 +119,7 @@ graph = aegisgraph.Graph()
 graph.load_graph("/home/daniel/aegisgraph/data/facebook_combined.txt")  # You need to create this file for testing
 """
 
-time_aegisgraph = timeit.timeit("graph.random_walk(start_node=10, walk_length=5, num_walks=3)", setup=setup_aegisgraph, number=10000000)
+time_aegisgraph = timeit.timeit("graph.random_walk(start_node=10, walk_length=5, num_walks=3)", setup=setup_aegisgraph, number=1000000)
 
 
 print(f"aegisgraph: {time_aegisgraph:.4f}s | NetworkX: {time_nx:.4f}s")

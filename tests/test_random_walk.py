@@ -6,7 +6,7 @@ import aegisgraph
 
 def test_random_walk():
     graph = aegisgraph.Graph()
-    graph.load_edges("/home/daniel/aegisgraph/data/facebook_combined.txt")  # Create a small graph for testing
+    graph.load_graph("/home/daniel/aegisgraph/data/facebook_combined.txt")  # Create a small graph for testing
 
     walks = graph.random_walk(start_node=1, walk_length=5, num_walks=3)
     
